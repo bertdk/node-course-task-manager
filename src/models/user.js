@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const bcyrpt = require("bcryptjs");
 const mongoose = require("mongoose");
 const validator = require("validator");
@@ -40,8 +41,38 @@ const userSchema = new mongoose.Schema({
       }
     },
   },
+  tokens: [
+    {
+      token: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
 });
 
+// Instance method
+userSchema.methods.generateAuthToken = async function () {
+  const user = this;
+  const token = jwt.sign({ _id: user._id.toString() }, "whtyughvbikfc");
+
+  user.tokens = user.tokens.concat({ token });
+  await user.save();
+
+  return token;
+};
+
+userSchema.methods.toJSON = function () {
+  const user = this;
+  const userObject = user.toObject();
+
+  delete userObject.password;
+  delete userObject.tokens;
+
+  return userObject;
+};
+
+// Model method
 userSchema.statics.findByCredentials = async (email, pw) => {
   const user = await User.findOne({ email });
 

@@ -4,53 +4,61 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const Task = require("./tasks");
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  age: {
-    type: Number,
-    default: 0,
-    validate(value) {
-      if (value < 0) {
-        throw new Error("Age must be positive");
-      }
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
     },
-  },
-  email: {
-    type: String,
-    required: true,
-    validate(value) {
-      if (!validator.isEmail(value)) {
-        throw new Error("Invalid email");
-      }
-    },
-    trim: true,
-    lowercase: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-    trim: true,
-    minlength: 7,
-    validate(value) {
-      if (value.toLowerCase().includes("password")) {
-        throw new Error("Invalid password: cannot contain 'password");
-      }
-    },
-  },
-  tokens: [
-    {
-      token: {
-        type: String,
-        required: true,
+    age: {
+      type: Number,
+      default: 0,
+      validate(value) {
+        if (value < 0) {
+          throw new Error("Age must be positive");
+        }
       },
     },
-  ],
-});
+    email: {
+      type: String,
+      required: true,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error("Invalid email");
+        }
+      },
+      trim: true,
+      lowercase: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 7,
+      validate(value) {
+        if (value.toLowerCase().includes("password")) {
+          throw new Error("Invalid password: cannot contain 'password");
+        }
+      },
+    },
+    tokens: [
+      {
+        token: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+    avatar: {
+      type: Buffer,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 // Virtual property = relation between 2 entities (this is just for mongoose, not stored in the database)
 userSchema.virtual("tasks", {
@@ -76,6 +84,7 @@ userSchema.methods.toJSON = function () {
 
   delete userObject.password;
   delete userObject.tokens;
+  delete userObject.avatar;
 
   return userObject;
 };

@@ -6,6 +6,7 @@ const taskRouter = require("./routes/task");
 const app = express();
 const port = process.env.PORT || 3000;
 
+// MIDDLEWARE
 // app.use((req, res, next) => {
 //   if (req.method === "GET") {
 //     res.send("GET requests are dis");
@@ -26,6 +27,7 @@ app.listen(port, () => {
   console.log(`Server is up on port ${port}`);
 });
 
+// POPULATE
 // const Task = require("./models/tasks");
 // const User = require("./models/user");
 
